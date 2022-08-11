@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catch Me Game</title>
+    <style>
+        *{
+            margin: 0px;
+            padding: 0px;
+        }
+       
+        .container{
+            width: 100vw;
+            height: 100vh;
+            background-image: linear-gradient(#00b8ff, #00ff37);
+        }
+        .container nav{
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            align-items: center;
+            height: 35px;
+        }
+        .container nav h1{
+            text-align: center;
+            font-size: 30px;
+            border-right: 1px solid white;
+        }
+        .container nav .time{
+            text-align: center;
+        }
+        #CatchMe_btn{
+            position: relative;
+            left: 0px;
+            top: 0px;
+            cursor: pointer;
+            width: 100px;
+            height: 50px;
+            background-color: yellow;
+            color: red;
+        }
+        #win{
+            text-align: center;
+            margin-top: 100px;
+            font-size: 100px;
+            color: blue;
+            display: none;
+        }
+        #Play_Again,#MainMenu{
+            width: 120px;
+            height: 50px;
+            color: white;
+            background-color: black;
+            border-radius: 10px;
+            cursor: pointer;
+            display: none;
+        }
+        .retry,.main_menu{
+            display: grid;
+            margin-top: 20px;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="CatchMe">
+        <nav>
+            <h1>Catch Me Game</h1>
+            <h1 id="level"></h1>
+            <div class="time" id="time"><h1>30 Sec</h1></div>
+        </nav>
+        <hr>
+        <input type="button" id="CatchMe_btn" onclick="win()" value="Catch Me">
+        <div id="win">You Win</div>
+        <div class="retry">
+            <input type="button" id="Play_Again" onclick="start()" value="Play Again">
+        </div>
+        <div class="main_menu">
+            <input type="button" id="MainMenu" onclick="main_menu()" value="Main Menu">
+        </div>
+    </div>
+    <script>
+        let url = window.location.href;
+        let params = (new URL(url)).searchParams;
+        let level = params.get('level');
+        let container = document.querySelector('.container');
+        let width = container.offsetWidth;
+        let height = container.offsetHeight;
+
+        let btn_width = document.querySelector('#CatchMe_btn').offsetWidth;
+        let btn_height = document.querySelector('#CatchMe_btn').offsetHeight;
+
+        let nav_height = document.querySelector('.container nav').offsetHeight;
+        
+        document.getElementById('level').innerHTML = "Difficulty Level : "+level;
+        let a;
+        let b;
+        start()
+        function start()
+        {
+            document.querySelector('.container nav .time').style.color = 'black';
+            let seconds = 15;
+            b = setInterval(time,1000)
+            function time()
+            {
+                document.getElementById('time').innerHTML = "<h1>"+seconds+" Sec</h1>";
+                seconds--;
+                if(seconds <= 9 & seconds%2!=0)   //Last 10 seconds
+                {
+                    document.querySelector('.container nav .time').style.color = 'yellow';
+                    var audio = new Audio('https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3');
+                    audio.play();   
+                }
+                if (seconds <=9 & seconds%2==0)
+                {
+                    document.querySelector('.container nav .time').style.color = 'red';
+                    var audio = new Audio('https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3');
+                    audio.play();   
+                }
+                if(seconds==-1)
+                {
+                    clearInterval(b);
+                    clearInterval(a);
+                    lose();
+                }
+            }
+            if(level == 'Easy')
+            {
+                a = setInterval(catch_game,900)
+            }
+            else if(level == 'Medium')
+            {
+                a = setInterval(catch_game,700)
+            }
+            else if(level == 'Hard')
+            {
+                a = setInterval(catch_game,500)
+            }
+            else
+            {
+                a = setInterval(catch_game,250)
+            }
+            
+            let catchMe_btn = document.getElementById('CatchMe_btn');
+            catchMe_btn.style.display = 'inline';
+            let text = document.getElementById('win');
+            text.style.display = 'none';
+            let play_again = document.getElementById('Play_Again');
+            play_again.style.display = 'none';
+            let main_menu = document.getElementById('MainMenu');
+            main_menu.style.display = 'none';
+        }
+        
+        function catch_game() 
+        {
+            console.log(width)
+            let newleft = Math.abs(Math.floor(Math.random()*width) - btn_width);
+            document.getElementById('CatchMe_btn').style.left = newleft+"px";
+            let newtop =  Math.abs(Math.floor(Math.random()*height) -btn_height -nav_height - 1);
+            document.getElementById('CatchMe_btn').style.top = newtop+"px";
+        }
+        function win()
+        {
+            clearInterval(a);
+            clearInterval(b);
+            let catchMe_btn = document.getElementById('CatchMe_btn');
+            catchMe_btn.style.display = 'none';
+            
+            document.getElementById('win').innerHTML = 'You Win';
+            let text = document.getElementById('win');
+            text.style.display = 'block';
+            
+            document.getElementById('Play_Again').value = 'Play Again';
+            let play_again = document.getElementById('Play_Again');
+            play_again.style.display = 'block';
+            
+            let main_menu = document.getElementById('MainMenu');
+            main_menu.style.display = 'block';
+            
+        }
+        function lose()
+        {
+            let catchMe_btn = document.getElementById('CatchMe_btn');
+            catchMe_btn.style.display = 'none';
+
+            document.getElementById('win').innerHTML = 'You lose';
+            let text = document.getElementById('win');
+            text.style.display = 'block';
+
+            document.getElementById('Play_Again').value = 'Retry';
+            let retry = document.getElementById('Play_Again');
+            retry.style.display = 'block'
+
+            let main_menu = document.getElementById('MainMenu');
+            main_menu.style.display = 'block';
+        }
+        function main_menu()
+        {
+            location.replace('Level.html')
+        }
+    </script>
+
+    <?php
+        
+    ?>
+</body>
+</html>

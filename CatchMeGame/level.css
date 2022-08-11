@@ -1,0 +1,29 @@
+h1{
+    margin-top: 10px;
+    text-align: center;
+    color: white;
+}
+section{
+    height: 40vh;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+section::before{
+    content: "";
+    background: url('CatchMe.jpg');
+    /* Position absolute */
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    opacity: 1;
+}
+.levels{
+    background-color: aqua;
+    width: 300px;
+    height: 40px;
+    margin-top: 10px;
+}
